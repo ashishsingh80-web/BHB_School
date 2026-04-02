@@ -1,4 +1,54 @@
-a# BHB International School ERP Blueprint
+# BHB International School ERP Blueprint
+
+> Final sync note: `bhb_international_school_erp_blueprint.md` now stores the concise "Ultimate Master Blueprint (Final)" summary. This detailed file remains the implementation guide and should stay consistent with that agreed scope.
+
+## 0. Final Scope Sync
+The agreed final scope for this project is:
+
+- admission CRM with strict pipeline: enquiry -> follow-up -> registration -> document verification -> admission fee -> final admission
+- survey-led field admissions with GPS capture, validation, duplicate checks, and auto enquiry creation
+- online lead capture with webhooks, UTM attribution, and campaign tracking
+- student management with parent linkage and document storage
+- fee management with reminders, receipts, ledger, and defaulter workflows
+- academics with Daily Class Taken and Smart Content
+- student and staff attendance with automated alerts
+- exams and results for both early-years and CBSE-style formats
+- timetable generation with conflict detection
+- communication across WhatsApp, SMS, and email
+- AI tooling for teachers, students, and parents
+- finance covering expenses and staff advance recovery
+- transport covering vehicles, fuel, mileage, and compliance
+- inventory, certificates, automation engine, and reporting
+
+### Final Menu Intent
+The top-level operating menu should continue converging toward:
+- Admissions
+- Students
+- Academics
+- Attendance
+- Exams & Results
+- Fees / Accounts
+- Transport
+- Communication
+- Portals
+- HR & Payroll
+- Inventory
+- Certificates
+- Reports
+- Master Setup
+- Settings
+
+### Final Database Direction
+The database should continue evolving around these domain clusters:
+- admissions and CRM
+- surveys and online leads
+- students and parents
+- academics and class logs
+- smart content usage
+- fees and finance
+- transport, fuel, and compliance
+- communications and automation logs
+- users, roles, permissions, and audit trails
 
 ## School Context
 - School Name: **BHB International School**
@@ -105,7 +155,96 @@ Also include:
 
 # 5. Final Module Hierarchy
 
-## 5.0 WhatsApp Automation & Teacher Daily Class Operations as Cross-System Priorities
+## 5.0 Refined Module Architecture (Implementation-Aligned)
+To keep this blueprint practical for build execution, treat the ERP as a set of module groups instead of a long flat list. This structure aligns with the current application route groups and makes ownership, sequencing, and dependencies clearer.
+
+### Group A. Foundation & Governance
+These modules define identity, permissions, sessions, and operating context for every other workflow.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| Dashboard | Role-wise overview, alerts, AI summary, operational KPIs | all transactional modules | partial |
+| Master Setup | school profile, sessions, classes, sections, subjects, fee heads, document types, notification templates, transport masters | none | partial |
+| Settings & Access Control | users, roles, permissions, audit logs, integrations, system settings | auth and role model | partial |
+| Reports & Audit | reporting shell, audit views, executive summaries | all transactional modules | partial |
+
+### Group B. Student Lifecycle Core
+These modules should remain tightly integrated because they form the main ERP spine from enquiry to active student operations.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| Admissions | enquiry, follow-up, registration, admission form, approvals, pending documents, waitlist, online leads, field survey | master setup | strong |
+| Students (SIS) | student list, profile, archives, documents, sibling mapping, promotion/transfer history | admissions, master setup | partial |
+| Fees | fee structure, assignment, collection, receipts, refunds, ledger, defaulters, collection analytics | students, master setup | strong |
+| Attendance | daily student attendance, staff attendance, leave, monthly reports, alerts | students, sessions, sections | partial |
+
+### Group C. Academic Operations
+These modules should be designed as one teaching-operations layer rather than isolated screens.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| Academics | teacher allocation, subject allocation, class diary, homework/classwork, syllabus, notebook check, smart content | master setup, students, timetable | partial |
+| Daily Class Taken | actual period execution, topic taught, homework issued, missed classes, substitute visibility | academics, timetable, staff mapping | planned |
+| Timetable | class timetable, teacher timetable, substitute management, room/period allocation, timetable versions | master setup, HR/staff data | partial |
+| Exams & Results | exam setup, marks entry, grade rules, results, report cards, result analysis, weak students | students, academics, attendance | strong |
+
+### Group D. Communication & Experience
+This group owns communication flows and family-facing experiences; it should consume data from lifecycle and academic modules rather than duplicate it.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| Communication | notices, complaints, SMS, WhatsApp, email, PTM reminders, communication logs, templates | admissions, fees, attendance, exams | partial |
+| Parent Portal | attendance, fees, homework, notices, transport-facing views, complaints | students, fees, attendance, academics | partial |
+| Student Portal | student dashboard, timetable, homework, notices, self-service views | students, academics, timetable | partial |
+| Certificates & Documents | bonafide, fee certificate, ID card, no-dues, TC workflow | students, fees, settings | planned |
+| Front Office | visitor register, calls, appointments, enquiries, incoming/outgoing documents | admissions, communication | planned |
+
+### Group E. Operations, Finance & Administration
+These modules support back-office execution and should share masters, audit trails, and reporting patterns.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| Accounts & Expenses | expenses, staff advance, fuel purchases/issues, profitability support data | master setup, HR, transport | partial |
+| HR & Payroll | staff directory, attendance linkage, leave, salary setup, payroll, statutory settings | master setup, settings | partial |
+| Transport | routes, stops, vehicles, student mapping, compliance, transport fees, fuel log | students, master setup, fees | partial |
+| Inventory & Assets | item master, stock movement, issue register, low-stock alerts, asset register | master setup, accounts | partial |
+
+### Group F. Intelligence & Differentiators
+These modules create leverage across the ERP and should be built as reusable services, not siloed pages.
+
+| Module | Primary scope | Depends on | Current build status |
+| --- | --- | --- | --- |
+| WhatsApp Automation Layer | triggers, templates, delivery logs, failed queue, acknowledgements, analytics | communication plus source modules | partial |
+| AI Tutor | teacher tools, student practice, parent support, usage logs | academics, exams, portals | planned |
+| AI Ops Layer | summaries, drafting, anomaly detection, search, recommendations | all high-signal modules | partial |
+
+### Canonical Route Groups
+Use the following groups as the source of truth for module boundaries:
+
+- `/dashboard`
+- `/master/*`
+- `/admissions/*`
+- `/students/*`
+- `/fees/*`
+- `/accounts/*`
+- `/attendance/*`
+- `/academics/*`
+- `/timetable/*`
+- `/exams/*`
+- `/communication/*`
+- `/portal/*`
+- `/hr/*`
+- `/transport/*`
+- `/inventory/*`
+- `/front-office/*`
+- `/certificates/*`
+- `/reports/*`
+- `/settings/*`
+
+### Build Rule for Module Refinement
+When adding new features, prefer extending an existing module before creating a brand-new top-level menu. New modules are only justified when they introduce a distinct owner, workflow, data model, and reporting surface.
+
+## 5.0A WhatsApp Automation & Teacher Daily Class Operations as Cross-System Priorities
 These two areas should not be treated as small add-ons. They should be built as **core cross-functional layers** inside the ERP.
 
 ### A. WhatsApp Automation Layer
@@ -2309,6 +2448,8 @@ This will produce a practical, scalable, school-ready ERP instead of an overcomp
 
 # 16. Final Sidebar Menu and Route Structure
 
+This sidebar should follow the refined module groups above. Keep the sidebar optimized for operations, not for document completeness. Items that are still planned can stay in the blueprint without appearing in the first production sidebar.
+
 ## 16.1 Recommended Sidebar Structure
 
 ### 1. Dashboard
@@ -2317,7 +2458,21 @@ This will produce a practical, scalable, school-ready ERP instead of an overcomp
 - Alerts & Tasks
 - Recent Activity
 
-### 2. Admissions
+### 2. Master Setup
+- School Profile
+- Academic Sessions
+- Classes
+- Sections
+- Subjects
+- Fee Heads
+- Exam Types
+- Student Categories
+- Document Types
+- Notification Templates
+- Transport Masters
+- Staff Designations
+
+### 3. Admissions
 - Enquiry Entry
 - Enquiry List
 - Follow-Up Tracker
@@ -2327,19 +2482,18 @@ This will produce a practical, scalable, school-ready ERP instead of an overcomp
 - Approved Admissions
 - Rejected/Cancelled Admissions
 - Waitlist
+- Survey
+- Online Leads
 
-### 3. Students
+### 4. Students
 - Student List
 - Student Profile
 - Promote / Transfer Students
 - Archived / Inactive Students
 - Student Documents
 - Sibling Mapping
-- Interest & Talent Profile
-- Student Achievement Register
 
-### 4. Fees
-- Fee Heads
+### 5. Fees
 - Fee Structure
 - Fee Assignment
 - Collect Fee
@@ -2349,144 +2503,88 @@ This will produce a practical, scalable, school-ready ERP instead of an overcomp
 - Defaulter List
 - Daily Collection
 - Monthly Collection
-- Concession Management
-- Fee Reports
+- Head-wise Reports
 
-### 5. Attendance
+### 6. Accounts
+- Expenses
+- Staff Advance
+- Fuel (Purchases & Issues)
+
+### 7. Attendance
 - Student Attendance
 - Staff Attendance
 - Leave Entries
 - Attendance Reports
 - Low Attendance Alerts
 
-### 6. Academics
+### 8. Academics
 - Subject Allocation
 - Teacher Allocation
-- Daily Class Taken
-- Topic Taught Register
-- Classwork Upload
-- Homework Upload
 - Lesson Plans
+- Homework / Classwork
+- Smart Content
+- Class Diary
 - Syllabus Tracking
 - Notebook Check
-- Weekly Teaching Summary
-- Missed Class Tracker
-- Substitute Classes
 
-### 7. Timetable
-- Timetable Setup
-- Auto Timetable Generator
+### 9. Timetable
 - Class Timetable
 - Teacher Timetable
-- Substitute Timetable
-- Conflict Checker
-- Timetable Versions
+- Substitute Management
+- Room / Period Allocation
 
-### 8. Exams & Results
+### 10. Exams & Results
 - Exam Setup
-- Assessment Rules
 - Marks Entry
+- Grade Rules
 - Result Processing
-- Nursery–UKG Progress Cards
-- Class 1–9 Report Cards
+- Report Card
 - Result Analysis
 - Weak Students Report
-- Topper List
 
-### 9. Communication
+### 11. Communication
 - Notice Board
 - Broadcast Messages
 - SMS Center
 - WhatsApp Center
 - Email Center
-- Scheduled Messages
-- Parent Replies
-- Communication Logs
-- Complaint Tracking
 - PTM Reminders
-- Template Library
+- Templates
+- Complaint Tracking
+- Communication Logs
 
-### 10. AI Tutor
-- Teacher AI Lesson Planner
-- Teacher Worksheet Generator
-- Teacher Assessment Builder
-- Teacher Remedial Planner
-- Teacher Remark Generator
-- Student Learn Mode
-- Student Practice Mode
-- Student Doubt Solver
-- Student Exam Prep
-- Student Revision Notes
-- Parent Academic Support
-- AI Usage Reports
-
-### 11. Parent Portal
+### 12. Portals
 - Parent Dashboard
-- Attendance
-- Fees & Receipts
-- Homework/Classwork
-- Results
-- Notices
-- Transport
-- Child Interest Profile
-- Suggestions for Your Child
-- Complaints / Requests
-
-### 12. Student Portal
 - Student Dashboard
-- Homework
-- Classwork
-- Attendance
-- Results
-- Timetable
-- AI Tutor
-- Notices
+- Parent Attendance
+- Parent Fees
+- Parent Homework
+- Student Timetable
 
-### 13. Transport
-- Route Master
-- Stop Master
-- Stop Distance Mapping
-- Vehicle Master
-- Driver / Conductor Records
-- Student Transport Allocation
-- Distance Slab Master
-- Transport Fee Rule Engine
-- One-Way / Two-Way Settings
-- Fee Override Register
-- Route Reports
-- Delay / Issue Alerts
-
-### 14. HR & Payroll
+### 13. HR & Payroll
 - Staff Directory
-- Joining & Documents
-- Staff Attendance
-- Leave Management
-- Salary Structure
+- Leave
+- Salary Setup
 - Payroll Run
 - Salary Slips
-- PF Settings
-- ESIC Settings
-- Statutory Reports
 
-### 15. Expenses
-- Expense Category Master
-- Vendor / Payee Master
-- Daily Expense Entry
-- Bill / Voucher Upload
-- Approval Queue
-- Petty Cash Register
-- Monthly Expense Summary
-- Expense Reports
+### 14. Transport
+- Routes
+- Stops
+- Vehicles
+- Student Route Mapping
+- Transport Fees
+- Compliance & Documents
+- Fuel Log
 
-### 16. Inventory
+### 15. Inventory
 - Item Master
-- Stock In
-- Stock Out
+- Stock In / Out
 - Issue Register
 - Low Stock Alerts
 - Asset Register
 
-### 17. Front Office
+### 16. Front Office
 - Visitor Register
 - Call Log
 - Enquiries
@@ -2494,47 +2592,24 @@ This will produce a practical, scalable, school-ready ERP instead of an overcomp
 - Complaints
 - Inward / Outward Documents
 
-### 18. Certificates
+### 17. Certificates
 - Bonafide Certificate
 - Fee Certificate
 - Character Certificate
 - ID Card
 - No Dues Certificate
 - TC Requests
-- TC Issue Register
 
-### 19. Reports
+### 18. Reports
 - Admission Reports
 - Student Reports
 - Fee Reports
 - Attendance Reports
-- Academic Reports
-- Timetable Reports
-- Result Reports
-- Transport Reports
-- HR & Payroll Reports
-- Expense Reports
-- Communication Reports
+- Exam Reports
 - AI MIS Summary
 - Audit Reports
 
-### 20. Master Setup
-- School Profile
-- Academic Sessions
-- Classes
-- Sections
-- Subjects
-- Houses
-- Exam Types
-- Grade Rules
-- Fee Heads
-- Student Categories
-- Document Types
-- Notification Templates
-- Holiday Calendar
-- Staff Designations
-
-### 21. Settings & Access Control
+### 19. Settings & Access Control
 - Users
 - Roles
 - Permissions
@@ -2707,4 +2782,3 @@ Use this document as the master implementation guide for Cursor. Build module by
 - AI tutor support
 - transport fee accuracy
 - parent-facing actionable suggestions
-
